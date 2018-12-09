@@ -1,0 +1,200 @@
+swagger: "2.0"
+info:
+  title: Sample API
+  description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
+  version: 0.1.9
+
+paths:
+  /filesystem:
+    get:
+      summary: "fetches a resource"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "dir"
+        in: query
+        description: "directory path of resource"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "item fetched successfully"
+          schema:
+            $ref: "#/definitions/Response"
+        404:
+          description: "item not found"
+    post:
+      summary: "adds a new resource"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name: body
+        description: "creates new resource"
+        required: true
+        schema:
+          $ref: '#/definitions/Resource'
+      responses:
+        200:
+          description: resource created successfully
+          schema:
+            $ref: '#/definitions/Response'
+        400:
+          description: resource already exists
+    delete:
+      summary: "Deletes a resource"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "dir"
+        in: query
+        description: resource path to be deleted
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successfully deleted"
+          schema:
+            $ref: '#/definitions/err'
+        400:
+          description: "bad request"
+          schema:
+            $ref: '#/definitions/err'
+        404:
+          description: "no such path"
+          schema:
+            $ref: '#/definitions/err'
+    put:
+      summary: "updates a resource"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name: body
+        description: "update resource"
+        required: true
+        schema:
+          $ref: '#/definitions/Resource'
+      responses:
+        200:
+          description: resource created successfully
+          schema:
+            $ref: '#/definitions/Response'
+        404:
+          description: resource does not exist
+  /stat/count:
+    get:
+      summary: "shows how many resources are under that directory"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "dir"
+        in: query
+        description: "directory path of resource"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "item fetched successfully"
+          schema:
+            $ref: '#/definitions/FileCount'
+        404:
+          description: "item not found"
+          schema:
+            $ref: '#/definitions/err'
+  /stat/alphanumerics:
+    get:
+      summary: "shows average and standard deviation number of resources under given path"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "dir"
+        in: query
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "item fetched successfully"
+          schema:
+            $ref: '#/definitions/alphanumerics'
+        404:
+          description: "item not found"
+          schema:
+            $ref: '#/definitions/err'
+  /stat/wordlen:
+    get:
+      summary: "shows average and standard deviation number of word length under given path"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "dir"
+        in: query
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "item fetched successfully"
+          schema:
+            $ref: '#/definitions/alphanumerics'
+        404:
+          description: "item not found"
+          schema:
+            $ref: '#/definitions/err'
+definitions:
+  Resource:
+    type: "object"
+    properties:
+      Dir:
+        type: "string"
+      Content:
+        type: "string"
+  err:
+    type: "object"
+    properties:
+      StatusCode:
+        type: "integer"
+      Error:
+        type: "string"
+  Response:
+    type: "object"
+    properties:
+      StatusCode:
+        type: "integer"
+      Error:
+        type: "string"
+      Resource:
+        type: object
+        properties:
+          Dir:
+            type: "string"
+          Content:
+            type: "string"
+  FileCount:
+    type: "object"
+    properties:
+      StatusCode:
+        type: "integer"
+      Error:
+        type: "string"
+      TotalFiles:
+        type: "integer"
+        format: "float64"
+  stat:
+    type: "object"
+    properties:
+      Mean:
+        type: "integer"
+        format: "float64"
+      StandardDeviation:
+        type: "integer"
+        format: "float64"
+  alphanumerics:
+    type: "object"
+    properties:
+      StatusCode:
+        type: "integer"
+      Error:
+        type: "string"
+      Stat:
+        type: "object"
+        $ref: '#/definitions/stat'
