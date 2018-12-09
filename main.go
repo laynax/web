@@ -23,6 +23,12 @@ func main() {
 	fs.PUT("/:id", update)
 	fs.DELETE("/:id", deleteHandler)
 
+	st := gp.Group("/stat")
+	st.GET("/count", totalSubDir)
+	st.GET("/alphanumerics", alphanumericStatics)
+	st.GET("/wordlen", wordLength)
+	st.GET("/size", size)
+
 	e.Run(":3412")
 }
 

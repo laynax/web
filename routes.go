@@ -77,6 +77,73 @@ func update(c *gin.Context) {
 	c.JSON(http.StatusOK, payload)
 }
 
+func totalSubDir(c *gin.Context) {
+	dir := c.Query("dir")
+	if dir == "" {
+		json(c, nil, errors.New("dir cannot be empty"))
+		return
+	}
+
+	count, err := includedFolderCount(dir)
+	response := struct {
+		TotalFiles int
+	}{count}
+	json(c, response, err)
+}
+
+func alphanumericStatics(c *gin.Context) {
+	dir := c.Query("dir")
+	if dir == "" {
+		json(c, nil, errors.New("dir cannot be empty"))
+		return
+	}
+
+	meanAN, stdDev, err := alphanumericStatic(dir)
+	if err != nil {
+		json(c, nil, err)
+		return
+	}
+
+	resp := Stat{meanAN, stdDev}
+	json(c, resp, nil)
+}
+
+func wordLength(c *gin.Context) {
+	dir := c.Query("dir")
+	if dir == "" {
+		json(c, nil, errors.New("dir cannot be empty"))
+		return
+	}
+
+	mean, dev, err := averageWorldLength(dir)
+	if err != nil {
+		json(c, nil, err)
+		return
+	}
+
+	resp := Stat{mean, dev}
+	json(c, resp, nil)
+}
+
+func size(c *gin.Context) {
+	dir := c.Query("dir")
+	if dir == "" {
+		json(c, nil, errors.New("dir cannot be empty"))
+		return
+	}
+
+	size, err := directorySize(dir)
+	if err != nil {
+		json(c, nil, err)
+		return
+	}
+
+	resp := struct {
+		Size int64
+	}{size}
+	json(c, resp, nil)
+}
+
 func json(c *gin.Context, data interface{}, err ...error) {
 	var e error
 	if len(err) != 0 && err[0] != nil {
