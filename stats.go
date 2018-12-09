@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 type Stat struct {
@@ -15,10 +16,13 @@ type Stat struct {
 }
 
 func includedFolderCount(dir string) (int, error) {
-	dir = mainDir + dir
+	dir, err := absPath(dir)
+	if err != nil {
+		return 0, err
+	}
 
 	var counter int
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info == nil {
 			return os.ErrNotExist
 		}
@@ -37,10 +41,13 @@ func includedFolderCount(dir string) (int, error) {
 }
 
 func averageWorldLength(dir string) (float64, float64, error) {
-	dir = mainDir + dir
+	dir, err := absPath(dir)
+	if err != nil {
+		return 0, 0, err
+	}
 
 	var arr []float64
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info == nil {
 			return os.ErrNotExist
 		}
@@ -76,10 +83,13 @@ func averageWorldLength(dir string) (float64, float64, error) {
 }
 
 func alphanumericStatic(dir string) (float64, float64, error) {
-	dir = mainDir + dir
+	dir, err := absPath(dir)
+	if err != nil {
+		return 0, 0, err
+	}
 
 	var arr []float64
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info == nil {
 			return os.ErrNotExist
 		}
@@ -147,4 +157,12 @@ func mean(indexes ...float64) float64 {
 		sum += indexes[i]
 	}
 	return sum / float64(len(indexes))
+}
+
+func absPath(dir string) (string, error) {
+	if strings.Contains(dir, "..") {
+		return "", errors.New("given path cannot contain '..'")
+	}
+
+	return mainDir + dir, nil
 }

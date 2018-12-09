@@ -32,7 +32,6 @@ func get(c *gin.Context) {
 
 	id := c.Param("id")
 	r, err := getResource(dir, id)
-	// ???
 	if err != nil {
 		json(c, nil, err)
 		return

@@ -9,10 +9,6 @@ import (
 	"strconv"
 )
 
-// TODO first char / validation
-// TODO create duplication
-// TODO .. security check
-
 type resource struct {
 	ID      string
 	Dir     string
