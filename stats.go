@@ -1,16 +1,16 @@
 package main
 
 import (
+	"errors"
 	"io/ioutil"
 	"math"
 	"os"
 	"path/filepath"
 	"regexp"
-	"errors"
 )
 
 type Stat struct {
-	Mean      float64
+	Mean              float64
 	StandardDeviation float64
 }
 
@@ -71,7 +71,6 @@ func averageWorldLength(dir string) (float64, float64, error) {
 
 	m := mean(arr...)
 	sd := stdDeviation(m, arr...)
-
 
 	return m, sd, nil
 }
